@@ -46,7 +46,7 @@ class LaunchScreen extends Component
     super(props);
 
     this.state = {
-      dataUrl: "https://jummum.co/app/PRD_JUMMUM_BO_1.1/",
+      dataUrl: "https://jummum.co/app/PRD_JUMMUM_BO_1.3/",
     }
   }
 

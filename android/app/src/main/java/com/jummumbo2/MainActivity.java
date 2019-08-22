@@ -1,4 +1,4 @@
-package com.jummumbo2;
+package com.jummumbo;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

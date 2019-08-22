@@ -1257,7 +1257,7 @@ export class LuckyDrawDetailScreen extends Component
           pickerViewStyle={{backgroundColor:"#C7C7C7",height:150}}
           onValueChange={(value)=>{this.rewardRankChanged(value)}}
           value={this.state.rewardRank}
-          options={[{value:1,label:"1"},{value:2,label:"2"},{value:3,label:"3"},{value:4,label:"4"}]}  />
+          options={[{value:1,label:"1"},{value:2,label:"2"},{value:3,label:"3"}]}  />
 
 
         <Text style={styles.label}></Text>
