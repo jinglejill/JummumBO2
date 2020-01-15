@@ -170,6 +170,15 @@ export class NoteDetailScreen extends Component
     this.setState({"nameEn":this.state.name});
   }
 
+  getItems = () => {
+    var items = [];
+    this.state.statusOptions.map((statusOption)=>
+    {
+      items.push(<Picker.Item label={statusOption.label} value={statusOption.value} />);
+    })
+    return items;
+  }
+
   render()
   {
     return (
@@ -229,6 +238,15 @@ export class NoteDetailScreen extends Component
         />
         <Text style={styles.label}></Text>
         <Text style={styles.label}>ประเภท</Text>
+        {Platform.OS === 'android'?(<View style={styles.textInput}><Picker
+          selectedValue={this.state.type}
+          style={{
+          width: Dimensions.get('window').width-2*20,
+          height: 20}}
+          onValueChange={(value)=>{this.setState({type:value})}}
+          >
+          {this.getItems()}
+        </Picker></View>):(
         <SelectInput
           style={styles.selectInput}
           labelStyle={{fontFamily: 'Prompt-Regular',lineHeight:28}}
@@ -238,7 +256,7 @@ export class NoteDetailScreen extends Component
           pickerViewStyle={{backgroundColor:"#C7C7C7",height:150}}
           onValueChange={(value)=>{this.setState({type:value})}}
           value={this.state.type}
-          options={this.state.statusOptions}  />
+          options={this.state.statusOptions}  />)}
         <Text style={styles.label}></Text>
         <MessageBox
           display={this.state.display}

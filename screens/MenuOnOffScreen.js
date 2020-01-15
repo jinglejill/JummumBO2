@@ -435,7 +435,7 @@ export class MenuOnOffScreen extends Component
             activeTabTextStyle={{fontFamily: "Prompt-SemiBold",color: "#FF3C4B"}}
             />}
         >
-          {this.state.menuType.map((item, i) => <this.Page key={i} menuTypeID={item.MenuTypeID} tabLabel={{label: item.NameEn}} label={item.NameEn}/>)}
+          {this.state.menuType.map((item, i) => <this.Page key={i} menuTypeID={item.MenuTypeID} tabLabel={{label: item.Name}} label={item.Name}/>)}
         </ScrollableTabView>
         <Spinner isVisible={this.state.showSpinner} style={{position:'absolute',top:(Dimensions.get('window').height-30)/2,left:(Dimensions.get('window').width-30)/2}} color={'#a2a2a2'} size={15} type={'Circle'}/>
         {this.state.showSpinner && Platform.OS === 'android'?(<ActivityIndicator size={30} color="#a2a2a2" />):null}

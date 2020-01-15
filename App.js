@@ -36,6 +36,8 @@ import LuckyDrawDetailScreen from './screens/LuckyDrawDetailScreen.js';
 import LuckyDrawRedeemScreen from './screens/LuckyDrawRedeemScreen.js';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen.js';
 import NoteSettingScreen from './screens/NoteSettingScreen.js';
+import VoucherListScreen from './screens/VoucherListScreen.js';
+import VoucherCodeScreen from './screens/VoucherCodeScreen.js';
 import TestScreen from './screens/TestScreen.js';
 
 
@@ -46,7 +48,7 @@ class LaunchScreen extends Component
     super(props);
 
     this.state = {
-      dataUrl: "https://jummum.co/app/PRD_JUMMUM_BO_1.3/",
+      dataUrl: "https://jummum.co/app/PRD_JUMMUM_BO_1.5/",
     }
   }
 
@@ -196,7 +198,7 @@ const styles = StyleSheet.create({
 const navigationOptions = ({ navigation }) => ({
     headerRight: navigation.state.params.showNewButton?<Button buttonStyle={styles.headerRightButton} titleStyle={{fontFamily: "Prompt-SemiBold"}} title={"New"} onPress={navigation.state.params.handleNewMenu} />:"",
     headerLeft: <HeaderBackButton tintColor="#FFFFFF" onPress={() => navigation.goBack(null)} />,
-    title: navigation.state.params.menuTopic==0?'เมนูหลัก':(navigation.state.params.menuTopic==1?'เมนูอื่นๆ':'เมนูไม่ได้ใช้'),
+    title: navigation.state.params.menuTopic==0?'เมนูหลัก':(navigation.state.params.menuTopic==1?'เมนูย่อย':'เมนูไม่ได้ใช้'),
     headerTintColor: '#ffffff',
     headerStyle: {backgroundColor: 'rgba(99,219,199,1)',display:"flex"},
     headerTitleStyle: {
@@ -335,7 +337,7 @@ const AppNavigator = createStackNavigator({
           onPress={() => {
             navigation.state.params.onGoBack(navigation.state.params.discountGroupMenuID);
             navigation.goBack(null);}} />,
-        title: navigation.state.params.menuTopic==0?'เมนูหลัก':(navigation.state.params.menuTopic==1?'เมนูอื่นๆ':'เมนูไม่ได้ใช้'),
+        title: navigation.state.params.menuTopic==0?'เมนูหลัก':(navigation.state.params.menuTopic==1?'เมนูย่อย':'เมนูไม่ได้ใช้'),
         headerTintColor: '#ffffff',
         headerStyle: {backgroundColor: 'rgba(99,219,199,1)',display:"flex"},
         headerTitleStyle: {
@@ -633,6 +635,40 @@ const AppNavigator = createStackNavigator({
           />,
         headerRight: null
       })
+  },
+  VoucherListScreen: {
+    screen: VoucherListScreen,
+    navigationOptions: ({ navigation }) => ({
+        headerRight: null,
+        headerLeft: <HeaderBackButton tintColor="#FFFFFF" onPress={() => navigation.goBack(null)} />,
+        title: 'รายการ Voucher',
+        headerTintColor: '#ffffff',
+        headerStyle: {backgroundColor: 'rgba(99,219,199,1)',display:"flex"},
+        headerTitleStyle: {
+              fontFamily: "Prompt-SemiBold",
+              fontSize: 18,
+              fontWeight: 'normal'
+            },
+        swipeEnabled: false,
+        animationEnabled:false,
+    })
+  },
+  VoucherCodeScreen: {
+    screen: VoucherCodeScreen,
+    navigationOptions: ({ navigation }) => ({
+        headerRight: null,
+        headerLeft: <HeaderBackButton tintColor="#FFFFFF" onPress={() => navigation.goBack(null)} />,
+        title: 'รายการ Voucher Code',
+        headerTintColor: '#ffffff',
+        headerStyle: {backgroundColor: 'rgba(99,219,199,1)',display:"flex"},
+        headerTitleStyle: {
+              fontFamily: "Prompt-SemiBold",
+              fontSize: 18,
+              fontWeight: 'normal'
+            },
+        swipeEnabled: false,
+        animationEnabled:false,
+    })
   },
   MessageBox: {
     screen: MessageBox,

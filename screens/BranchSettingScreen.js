@@ -86,6 +86,7 @@ export class BranchSettingScreen extends Component
         var parts = (+responseData.data.Branch.TakeAwayFee).toFixed(2).split(".");
         takeAwayFee = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",")+"."+parts[1];
       }
+      console.log("branch status" + responseData.data.Branch.Status);
       this.setState({
         branch:responseData.data.Branch,
         name:responseData.data.Branch.Name,
@@ -105,8 +106,8 @@ export class BranchSettingScreen extends Component
     if (buttonIndex === 0)
     {
       ImagePicker.openPicker({
-        width: 150,
-        height: 150,
+        width: 750,
+        height: 750,
         cropping: true,
         freeStyleCropEnabled: true,
         includeBase64: true
@@ -134,8 +135,8 @@ export class BranchSettingScreen extends Component
     else if (buttonIndex === 1)
     {
       ImagePicker.openCamera({
-        width: 150,
-        height: 150,
+        width: 750,
+        height: 750,
         cropping: true,
         freeStyleCropEnabled: true,
         avoidEmptySpaceAroundImage: true,
@@ -284,7 +285,17 @@ export class BranchSettingScreen extends Component
         />
         <Text style={styles.label}></Text>
         <Text style={styles.label}>สถานะ</Text>
-        <SelectInput
+        {Platform.OS === 'android'?(<View style={styles.textInput}><Picker
+          selectedValue={this.state.status.toString()}
+          style={{
+          width: Dimensions.get('window').width-2*20,
+          height: 20}}
+          onValueChange={(value)=>{this.setState({status:parseInt(value)})}}
+          >
+          <Picker.Item label="เปิดใช้แอพ" value="1" />
+          <Picker.Item label="เตรียมเปิดใช้แอพ" value="2" />
+          <Picker.Item label="ปิดการใช้แอพ" value="0" />
+        </Picker></View>):(<SelectInput
           style={styles.selectInput}
           labelStyle={{fontFamily: 'Prompt-Regular',lineHeight:28,fontWeight:'normal'}}
           buttonsTextStyle={styles.buttonText}
@@ -293,7 +304,8 @@ export class BranchSettingScreen extends Component
           pickerViewStyle={{backgroundColor:"#C7C7C7",height:150}}
           onValueChange={(value)=>{this.setState({status:value})}}
           value={this.state.status}
-          options={statusOptions}  />
+          options={statusOptions}  />)}
+
         <Text style={styles.label}></Text>
         <Text style={styles.label}>% Service charge</Text>
         <TextInput

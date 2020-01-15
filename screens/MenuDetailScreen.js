@@ -20,7 +20,7 @@ const statusOptions = [
 
 export class MenuDetailScreen extends Component
 {
-  menuOptions = [<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูอื่นๆ</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
+  menuOptions = [<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูย่อย</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
   imageOptions = [<Text style={styles.actionSheet}>Choose from Library...</Text>, <Text style={styles.actionSheet}>Take Photo...</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
 
   showActionSheet = () =>
@@ -129,8 +129,8 @@ export class MenuDetailScreen extends Component
       if (buttonIndex === 0)
       {
         ImagePicker.openPicker({
-          width: 150,
-          height: 150,
+          width: 750,
+          height: 750,
           cropping: true,
           freeStyleCropEnabled: true,
           includeBase64: true
@@ -157,8 +157,8 @@ export class MenuDetailScreen extends Component
       else if (buttonIndex === 1)
       {
         ImagePicker.openCamera({
-          width: 150,
-          height: 150,
+          width: 750,
+          height: 750,
           cropping: true,
           freeStyleCropEnabled: true,
           avoidEmptySpaceAroundImage: true,
@@ -475,6 +475,12 @@ export class MenuDetailScreen extends Component
     );
   }
 
+  statusChanged = (value) =>
+  {
+    console.log("status change new");
+    this.setState({status:value});
+  }
+
   copyMenu = () =>
   {
     fetch(this.state.dataUrl + 'JBOMenuCopyInsert.php',
@@ -587,16 +593,28 @@ export class MenuDetailScreen extends Component
         />
         <Text style={styles.label}></Text>
         <Text style={styles.label}>สถานะ</Text>
-        <SelectInput
+        {Platform.OS === 'android'?(<View style={styles.textInput}><Picker
+          selectedValue={this.state.status.toString()}
+          style={{
+          width: Dimensions.get('window').width-2*20,
+          height: 20}}
+          onValueChange={(itemValue, itemIndex) =>
+            {this.setState({status:parseInt(itemValue)})}
+          }>
+          <Picker.Item label="ใช้งานอยู่" value="1" />
+          <Picker.Item label="ของหมด" value="2" />
+          <Picker.Item label="ยังไม่เริ่มใช้" value="3" />
+          <Picker.Item label="ยกเลิกการใช้งาน" value="0" />
+        </Picker></View>):(<SelectInput
           style={[styles.selectInput]}
           labelStyle={{fontFamily: 'Prompt-Regular',lineHeight:Platform.OS === 'android'?null:28}}
           buttonsTextStyle={styles.buttonText}
           buttonsViewStyle={{backgroundColor:"#ECECEC",borderColor:"#C7C7C7"}}
           pickerItemStyle={{fontFamily:"Prompt-Regular"}}
           pickerViewStyle={{backgroundColor:"#C7C7C7",height:150}}
-          onValueChange={(value)=>{this.setState({status:value})}}
+          onValueChange={(itemValue, itemIndex) => {this.setState({status:itemValue})}}
           value={this.state.status}
-          options={statusOptions}  />
+          options={statusOptions}  />)}
 
         <Text style={styles.label}></Text>
         <CheckBox

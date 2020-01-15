@@ -174,13 +174,25 @@ export class MenuBelongToBuffetScreen extends Component
           timeToOrder = menu.TimeToOrder/60;
           data.push({key:menu.MenuID,label:menu.TitleThai,backgroundColor:'#FF3C4B',menuTypeID:menu.MenuTypeID,menuID:menu.MenuID,titleThai:menu.TitleThai, price:price, specialPrice:specialPrice, imageUrl:menu.ImageUrl, status:menu.Status, orderNo:menu.OrderNo, hasFood:hasFood, recommended:recommended, buffetMenu:buffetMenu, alacarteMenu:alacarteMenu, timeToOrder:timeToOrder, imageUrl:menu.ImageUrl, status:parseInt(menu.Status),menuTypeOrderNo:menu.MenuTypeOrderNo});
         });
-        data = data.sort(function (a, b) {
-          if(a.menuTypeOrderNo === b.menuTypeOrderNo)
+        if(menuTypeID == 0)
+        {
+          data = data.sort(function (a, b)
           {
-            return a.orderNo - b.orderNo;
-          }
-          return a.menuTypeOrderNo - b.menuTypeOrderNo;
-        });
+            return a.recommendedOrderNo - b.recommendedOrderNo;
+          });
+        }
+        else
+        {
+          data = data.sort(function (a, b)
+          {
+            if(a.menuTypeOrderNo === b.menuTypeOrderNo)
+            {
+              return a.orderNo - b.orderNo;
+            }
+            return a.menuTypeOrderNo - b.menuTypeOrderNo;
+          });
+        }
+        
       });
 
       data = data.filter((menu) => menu.titleThai.toLowerCase().includes(this.state.search.toLowerCase()));
@@ -397,7 +409,7 @@ export class MenuBelongToBuffetScreen extends Component
             activeTabTextStyle={{fontFamily: "Prompt-SemiBold",color: "#FF3C4B"}}
             />}
         >
-          {this.state.menuType.map((item, i) => <this.Page key={i} menuTypeID={item.MenuTypeID} tabLabel={{label: item.NameEn}} label={item.NameEn}/>)}
+          {this.state.menuType.map((item, i) => <this.Page key={i} menuTypeID={item.MenuTypeID} tabLabel={{label: item.Name}} label={item.Name}/>)}
         </ScrollableTabView>
         <Spinner isVisible={this.state.showSpinner} style={{position:'absolute',top:(Dimensions.get('window').height-30)/2,left:(Dimensions.get('window').width-30)/2}} color={'#a2a2a2'} size={15} type={'Circle'}/>
         {this.state.showSpinner && Platform.OS === 'android'?(<ActivityIndicator size={30} color="#a2a2a2" />):null}

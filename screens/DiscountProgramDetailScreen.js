@@ -22,7 +22,7 @@ const segments = [
 
 export class DiscountProgramDetailScreen extends Component
 {
-  menuOptions = [<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูอื่นๆ</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
+  menuOptions = [<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูย่อย</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
   imageOptions = [<Text style={styles.actionSheet}>Choose from Library...</Text>, <Text style={styles.actionSheet}>Take Photo...</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
 
   showActionSheet = () => {
@@ -1139,6 +1139,16 @@ export class DiscountProgramDetailScreen extends Component
     // this.setState({title: text});
   }
 
+  getItems = () => {
+    var items = [];
+    this.state.discountTypeOptions.map((discountTypeOption)=>
+    {
+      items.push(<Picker.Item label={discountTypeOption.label} value={discountTypeOption.value} />);
+    })
+
+    return items;
+  }
+
   render()
   {
     return (
@@ -1326,6 +1336,15 @@ export class DiscountProgramDetailScreen extends Component
 
         <Text style={styles.label}></Text>
         <Text style={styles.label}>ประเภทส่วนลด</Text>
+        {Platform.OS === 'android'?(<View style={styles.textInput}><Picker
+          selectedValue={this.state.discountType}
+          style={{
+          width: Dimensions.get('window').width-2*20,
+          height: 20}}
+          onValueChange={(value)=>{this.discountTypeChanged(value)}}
+          >
+          {this.getItems()}
+        </Picker></View>):(
         <SelectInput
           style={styles.selectInput}
           labelStyle={{fontFamily: 'Prompt-Regular',lineHeight:28}}
@@ -1335,7 +1354,7 @@ export class DiscountProgramDetailScreen extends Component
           pickerViewStyle={{backgroundColor:"#C7C7C7",height:150}}
           onValueChange={(value)=>{this.discountTypeChanged(value)}}
           value={this.state.discountType}
-          options={this.state.discountTypeOptions}  />
+          options={this.state.discountTypeOptions}  />)}
 
         {
           this.state.stepActive?(<View>
@@ -1515,7 +1534,7 @@ export class DiscountProgramDetailScreen extends Component
         <View style={{display:'flex',flexDirection:'row'}}>
         </View>
         <View style={{display:'flex',flexDirection:'row'}}>
-          <Text style={styles.label}>จำกัดจำนวนครั้่งที่ใช้</Text>
+          <Text style={styles.label}>จำกัดจำนวนครั้งที่ใช้</Text>
         </View>
         <TextInput
         style={styles.textInput}
@@ -1529,7 +1548,7 @@ export class DiscountProgramDetailScreen extends Component
         <View style={{display:'flex',flexDirection:'row'}}>
         </View>
         <View style={{display:'flex',flexDirection:'row'}}>
-          <Text style={styles.label}>จำกัดจำนวนครั้่งที่ใช้ต่อผู้ใช้</Text>
+          <Text style={styles.label}>จำกัดจำนวนครั้งที่ใช้ต่อผู้ใช้</Text>
         </View>
         <TextInput
         style={styles.textInput}
@@ -1543,7 +1562,7 @@ export class DiscountProgramDetailScreen extends Component
         <View style={{display:'flex',flexDirection:'row'}}>
         </View>
         <View style={{display:'flex',flexDirection:'row'}}>
-          <Text style={styles.label}>จำกัดจำนวนครั้่งที่ใช้ต่อผู้ใช้ต่อวัน</Text>
+          <Text style={styles.label}>จำกัดจำนวนครั้งที่ใช้ต่อผู้ใช้ต่อวัน</Text>
         </View>
         <TextInput
         style={styles.textInput}

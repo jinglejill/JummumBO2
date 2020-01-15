@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Dimensions, Image,TextInput,Alert,TouchableOpac
 import { CheckBox } from 'react-native-elements';
 import MessageBox from './../screens/MessageBox.js';
 import MessageBoxConfirm from './../screens/MessageBoxConfirm.js';
-import ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 import { Button } from 'react-native-elements';
 import Spinner from 'react-native-spinkit';
 import SelectInput from 'react-native-select-input-ios';

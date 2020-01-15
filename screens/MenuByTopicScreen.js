@@ -1,5 +1,5 @@
 import React, {Component}  from 'react';
-import { StyleSheet, Text, View, FlatList, Dimensions, TouchableWithoutFeedback, TouchableOpacity, Image, ScrollView, Platform,ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Dimensions, TouchableWithoutFeedback, TouchableOpacity, Image, ScrollView, Platform,ActivityIndicator,Alert } from 'react-native';
 import ScrollableTabView from 'react-native-scrollable-tab-view';
 import TabBar from "react-native-underline-tabbar";
 import DefaultPreference from 'react-native-default-preference';
@@ -7,6 +7,7 @@ import { SearchBar } from 'react-native-elements';
 import SortableGrid from 'react-native-sortable-grid'
 import Spinner from 'react-native-spinkit';
 
+//cat = 1 come from DiscountProgramDetailScreen send discountGroupMenuID as param
 //menuTopic for select menu belong to buffet
 //0=> alacarteMenu = 1 and status in (1,2),
 //1=> alacarteMenu = 0 and status in (1,2),
@@ -78,7 +79,12 @@ export class MenuByTopicScreen extends Component
       if(index == this.state.selectedIndex)
       {
         menu = menuType.Menu;
-        menu.map((menu)=>{
+        menu.map((menu)=>
+        {
+          if(this.state.category == 1 && !this.state.selectAll)
+          {
+            menu.Quantity = 0;
+          }
           menu.Selected = this.state.selectAll;
         });
         this.updateBuffetMenuMapList(menu,this.state.selectAll);
@@ -323,7 +329,8 @@ export class MenuByTopicScreen extends Component
     }
   }
 
-  actionOnRow(item) {
+  actionOnRow(item)
+  {
     //toggle select
     //update db and re-render
     selectedMenuType = this.state.menuType.filter((menuType) => menuType.MenuTypeID == item.menuTypeID);
@@ -332,14 +339,94 @@ export class MenuByTopicScreen extends Component
       selectedMenu = menu.filter((menu) => menu.MenuID == item.menuID);
       selectedMenu.map((menu)=>{
         menu.Selected = !menu.Selected;
+        if(this.state.category == 1)
+        {
+          menu.Quantity = 0;
+        }
         this.updateBuffetMenuMap(item.menuID,menu.Selected);
       });
     });
     this.setState({reRender:!this.state.reRender});
  };
 
- onChangeTab = (item) =>
+ tapOrderNow(item)
  {
+   //toggle select
+   //update db and re-render
+   selectedMenuType = this.state.menuType.filter((menuType) => menuType.MenuTypeID == item.menuTypeID);
+   selectedMenuType.map((menuType)=>{
+     menu = menuType.Menu;
+     selectedMenu = menu.filter((menu) => menu.MenuID == item.menuID);
+     selectedMenu.map((menu)=>{
+       // menu.Selected = !menu.Selected;
+       menu.Quantity = 1;
+       this.updateDiscountGroupMenuMapQuantity(item.menuID,menu.Quantity);
+     });
+   });
+   this.setState({reRender:!this.state.reRender});
+  };
+
+  quantityMinus(item)
+  {
+    //toggle select
+    //update db and re-render
+    selectedMenuType = this.state.menuType.filter((menuType) => menuType.MenuTypeID == item.menuTypeID);
+    selectedMenuType.map((menuType)=>{
+      menu = menuType.Menu;
+      selectedMenu = menu.filter((menu) => menu.MenuID == item.menuID);
+      selectedMenu.map((menu)=>{
+        // menu.Selected = !menu.Selected;
+        menu.Quantity = parseInt(menu.Quantity) - 1;
+        this.updateDiscountGroupMenuMapQuantity(item.menuID,menu.Quantity);
+      });
+    });
+    this.setState({reRender:!this.state.reRender});
+   };
+
+   quantityPlus(item)
+   {
+     //toggle select
+     //update db and re-render
+     selectedMenuType = this.state.menuType.filter((menuType) => menuType.MenuTypeID == item.menuTypeID);
+     selectedMenuType.map((menuType)=>{
+       menu = menuType.Menu;
+       selectedMenu = menu.filter((menu) => menu.MenuID == item.menuID);
+       selectedMenu.map((menu)=>{
+         // menu.Selected = !menu.Selected;
+         menu.Quantity = parseInt(menu.Quantity) + 1;
+         this.updateDiscountGroupMenuMapQuantity(item.menuID,menu.Quantity);
+       });
+     });
+     this.setState({reRender:!this.state.reRender});
+    };
+
+  updateDiscountGroupMenuMapQuantity = (menuID,quantity) =>
+  {
+    fetch(this.state.dataUrl + 'JBODiscountGroupMenuMapQuantityUpdate.php',
+    {
+      method: 'POST',
+      headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'application/json',
+                },
+      body: JSON.stringify({
+        branchID: this.state.branchID,
+        discountGroupMenuID: this.state.discountGroupMenuID,
+        menuID: menuID,
+        quantity: quantity,
+        // selected: selected,
+        modifiedUser: this.state.username,
+        modifiedDate: new Date().toLocaleString()
+      })
+    })
+    .then((response) => response.json())
+    .then((responseData) => {
+      this.setState({showSpinner:false});
+    }).done();
+  }
+
+  onChangeTab = (item) =>
+  {
    this.setState({selectedIndex:item.i});
    if(item.i == 0 || item.i == this.state.menuType.length-1)
    {
@@ -349,7 +436,7 @@ export class MenuByTopicScreen extends Component
    {
      this.props.navigation.setParams({ showNewButton: true });
    }
- }
+  }
 
   Page = ({label,menuTypeID}) =>
   {
@@ -370,15 +457,26 @@ export class MenuByTopicScreen extends Component
           buffetMenu = menu.BuffetMenu == 1;
           alacarteMenu = menu.AlacarteMenu == 1;
           timeToOrder = menu.TimeToOrder/60;
-          data.push({key:menu.MenuID,label:menu.TitleThai,backgroundColor:'#FF3C4B',menuTypeID:menu.MenuTypeID,menuID:menu.MenuID,titleThai:menu.TitleThai, price:price, specialPrice:specialPrice, imageUrl:menu.ImageUrl, orderNo:menu.OrderNo, hasFood:hasFood, recommended:recommended, buffetMenu:buffetMenu, alacarteMenu:alacarteMenu, timeToOrder:timeToOrder, imageUrl:menu.ImageUrl, status:parseInt(menu.Status), selected:menu.Selected, menuTypeOrderNo:menu.MenuTypeOrderNo});
+          data.push({key:menu.MenuID,label:menu.TitleThai,backgroundColor:'#FF3C4B',menuTypeID:menu.MenuTypeID,menuID:menu.MenuID,titleThai:menu.TitleThai, price:price, specialPrice:specialPrice, imageUrl:menu.ImageUrl, orderNo:menu.OrderNo, hasFood:hasFood, recommended:recommended, buffetMenu:buffetMenu, alacarteMenu:alacarteMenu, timeToOrder:timeToOrder, imageUrl:menu.ImageUrl, status:parseInt(menu.Status), selected:menu.Selected, menuTypeOrderNo:menu.MenuTypeOrderNo, quantity:menu.Quantity});
         });
-        data = data.sort(function (a, b) {
-          if(a.menuTypeOrderNo === b.menuTypeOrderNo)
+        if(menuTypeID == 0)
+        {
+          data = data.sort(function (a, b)
           {
-            return a.orderNo - b.orderNo;
-          }
-          return a.menuTypeOrderNo - b.menuTypeOrderNo;
-        });
+            return a.recommendedOrderNo - b.recommendedOrderNo;
+          });
+        }
+        else
+        {
+          data = data.sort(function (a, b)
+          {
+            if(a.menuTypeOrderNo === b.menuTypeOrderNo)
+            {
+              return a.orderNo - b.orderNo;
+            }
+            return a.menuTypeOrderNo - b.menuTypeOrderNo;
+          });
+        }
       });
 
       data = data.filter((menu) => menu.titleThai.toLowerCase().includes(this.state.search.toLowerCase()));
@@ -518,6 +616,43 @@ export class MenuByTopicScreen extends Component
 
     runOutImageSource = item.status == 2?require("./../assets/images/foodRunOutLabel.png"):require("./../assets/images/foodRunOutLabel_blank.png");
 
+    orderNow = (<View style={[styles.item,{backgroundColor: item.selected ? '#dff7f3' : '#FFFFFF'}]}>
+      {
+        item.selected ?(
+          <TouchableOpacity
+            onPress={ () => this.tapOrderNow(item)}
+            style={{
+            borderColor:'transparent'
+          }}
+          >
+            <Text style={styles.orderNow}>สั่งเลย</Text>
+          </TouchableOpacity>
+        ):null
+      }
+    </View>);
+
+    quantityOrder = (<View><View style={[styles.item,{backgroundColor: item.selected ? '#dff7f3' : '#FFFFFF',display:'flex',flexDirection:'row', alignSelf: 'flex-end',paddingRight:0 }]}>
+        <TouchableOpacity
+          onPress={ () => this.quantityMinus(item)}
+          style={{
+          borderColor:'transparent'
+        }}
+        >
+          <Text style={[styles.orderNow,{fontSize:24}]}>-</Text>
+        </TouchableOpacity>
+        <Text style={[styles.itemSub,{paddingRight:10,paddingTop:null,alignSelf: "center"}]}>{item.quantity}</Text>
+        <TouchableOpacity
+          onPress={ () => this.quantityPlus(item)}
+          style={{
+          borderColor:'transparent'
+        }}
+        >
+          <Text style={[styles.orderNow,{fontSize:24}]}>+</Text>
+        </TouchableOpacity>
+    </View>
+    </View>
+    );
+
     generalMenu = (
     <View
       style={[styles.item,{backgroundColor: item.selected ? '#dff7f3' : '#FFFFFF'}]}
@@ -532,15 +667,23 @@ export class MenuByTopicScreen extends Component
           style={{width:70,height:70,marginTop:10,marginLeft:20,borderRadius:10}}
         />
         <View>
-          <Text style={styles.itemText}>{item.titleThai}</Text>
+          <Text style={[styles.itemText]}>{item.titleThai}</Text>
           <View style={{display:'flex',flexDirection:'row'}}>
             <Text style={[styles.itemSub,(item.price == item.specialPrice)?null:{textDecorationLine: 'line-through', textDecorationStyle: 'solid'}]}>฿ {item.price}</Text>
             {item.price == item.specialPrice?null:(<Text style={[styles.itemSub,{color:"#FF3C4B",paddingLeft:10}]}>฿ {item.specialPrice}</Text>)}
           </View>
+          {
+            this.state.category == 1 && item.quantity == 0?orderNow:null
+          }
+          {
+            this.state.category == 1 && item.quantity != 0?quantityOrder:null
+          }
         </View>
       </View>
       <View style={{width:Dimensions.get('window').width-2*20,height:1,backgroundColor:"#e0e0e0",left:20,marginTop:10}}/>
     </View>);
+
+
 
     {
       menuItem = generalMenu;
@@ -560,7 +703,7 @@ export class MenuByTopicScreen extends Component
     }
     else
     {
-      itemView = (<TouchableOpacity
+      itemView = (<View><TouchableOpacity
         onPress={ () => this.actionOnRow(item)}
         style={{
         borderColor:'transparent'
@@ -569,7 +712,9 @@ export class MenuByTopicScreen extends Component
       onPressOut={moveEnd}
       >
       {menuItem}
-      </TouchableOpacity>);
+      </TouchableOpacity>
+      </View>
+      );
     }
 
     if (item.empty === true) {
@@ -590,7 +735,7 @@ export class MenuByTopicScreen extends Component
             activeTabTextStyle={{fontFamily: "Prompt-SemiBold",color: "#FF3C4B"}}
             />}
         >
-          {this.state.menuType.map((item, i) => <this.Page key={i} menuTypeID={item.MenuTypeID} tabLabel={{label: item.NameEn}} label={item.NameEn}/>)}
+          {this.state.menuType.map((item, i) => <this.Page key={i} menuTypeID={item.MenuTypeID} tabLabel={{label: item.Name}} label={item.Name}/>)}
         </ScrollableTabView>
         <Spinner isVisible={this.state.showSpinner} style={{position:'absolute',top:(Dimensions.get('window').height-30)/2,left:(Dimensions.get('window').width-30)/2}} color={'#a2a2a2'} size={15} type={'Circle'}/>
         {this.state.showSpinner && Platform.OS === 'android'?(<ActivityIndicator size={30} color="#a2a2a2" />):null}
@@ -638,8 +783,7 @@ const styles = StyleSheet.create({
     color: '#005A50',
     paddingTop: 10,
     paddingLeft: 10,
-    paddingRight: 20,
-    width: Dimensions.get('window').width - 2*20 - 10,
+    width: Dimensions.get('window').width - 2*20 - 70,
   },
   itemSub: {
     fontFamily: "Prompt-Regular",
@@ -667,5 +811,12 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   foodRunOutLabel:{width:35,height:35,position:'absolute',top:0,right:0},
+  orderNow: {
+    fontFamily: "Prompt-SemiBold",
+    fontSize: 12,
+    textAlign: 'right',
+    color: '#005A50',
+    alignItems: 'center'
+  },
 });
 export default MenuByTopicScreen;

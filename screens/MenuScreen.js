@@ -1,17 +1,18 @@
 import React, {Component}  from 'react';
-import { StyleSheet, Text , FlatList, Dimensions, TouchableWithoutFeedback, View, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text , FlatList, Dimensions,Image, TouchableWithoutFeedback, View, Platform, ActivityIndicator } from 'react-native';
 import DefaultPreference from 'react-native-default-preference';
 var SharedPreferences = require('react-native-shared-preferences');
 
-
+const heightMenu = (Dimensions.get('window').height - 64)/6;
 const data = [
-  { key: 'เมนูอาหารหลัก \nและส่วนลด' },
-  { key: 'เมนูอาหารอื่นๆ' },
+  { key: 'เมนูอาหารหลัก\nและส่วนลด' },
+  { key: 'เมนูอาหารย่อย\nของเมนูบุฟเฟ่ต์' },
   { key: 'เมนูอาหารยังไม่เริ่มใช้\n/ไม่ใช้แล้ว' },
   { key: 'รายการโน้ต' },
-  { key: 'Hot Deal' },
+  { key: 'โปรโมชั่น' },
   { key: 'เครื่องพิมพ์' },
-  { key: 'Lucky Draw' },
+  { key: 'ลุ้นรางวัล' },
+  { key: 'Voucher' },
   { key: 'ตั้งค่าร้านอาหาร' },
   { key: 'ออกจากระบบ' },
 ];
@@ -44,7 +45,7 @@ export class MenuScreen extends Component
 
   actionOnRow(item) {
    console.log('Selected Item :',item);
-   if(item.key == 'เมนูอาหารหลัก \nและส่วนลด')
+   if(item.key == 'เมนูอาหารหลัก\nและส่วนลด')
    {
      this.props.navigation.navigate('MenuOnOffScreen',
       {
@@ -54,7 +55,7 @@ export class MenuScreen extends Component
         'menuTopic': 0
       });
    }
-   else if(item.key == 'เมนูอาหารอื่นๆ')
+   else if(item.key == 'เมนูอาหารย่อย\nของเมนูบุฟเฟ่ต์')
    {
      this.props.navigation.navigate('MenuOnOffScreen',
       {
@@ -119,9 +120,18 @@ export class MenuScreen extends Component
         'username': this.props.navigation.state.params.username
       });
    }
-   else if(item.key == 'Lucky Draw')
+   else if(item.key == 'ลุ้นรางวัล')
    {
      this.props.navigation.navigate('LuckyDrawScreen',
+      {
+        'dataUrl': this.props.navigation.state.params.dataUrl,
+        'branchID': this.props.navigation.state.params.branchID,
+        'username': this.props.navigation.state.params.username
+      });
+   }
+   else if(item.key == 'Voucher')
+   {
+     this.props.navigation.navigate('VoucherListScreen',
       {
         'dataUrl': this.props.navigation.state.params.dataUrl,
         'branchID': this.props.navigation.state.params.branchID,
@@ -157,9 +167,7 @@ export class MenuScreen extends Component
     }
     return (
       <TouchableWithoutFeedback onPress={ () => this.actionOnRow(item)}>
-        <View
-          style={styles.item}
-        >
+        <View style={[styles.item,{marginRight:index%2==1?7:0}]}>
           <Text style={styles.itemText}>{item.key}</Text>
         </View>
       </TouchableWithoutFeedback>
@@ -170,10 +178,18 @@ export class MenuScreen extends Component
     console.log("menu screen:"+this.props.navigation.state.params.branchID);
     return (
       <View style={styles.background}>
-      <View style={styles.centerInContainer} >
-        <Text style={styles.itemText}></Text>
-        <Text style={styles.itemTitle}>สวัสดี</Text>
-        <Text style={styles.itemTextRegular}>{this.state.fullName}</Text>
+      <View style={[styles.centerInContainer]} >
+        <Image
+          source={require("./../assets/images/jummumPeek.png")}
+          style={{width:252/121.0*heightMenu,height:heightMenu,position:'absolute',left:0,top:0}}
+        />
+        <View style={{left:Dimensions.get('window').width/2,width:Dimensions.get('window').width/2,height:heightMenu}}>
+        {
+          Platform.OS === 'android'?null:(<Text style={styles.itemText}></Text>)
+        }
+          <Text style={[styles.itemTitle,{paddingTop:30}]}>สวัสดี</Text>
+          <Text style={styles.itemTextRegular}>{this.state.fullName}</Text>
+        </View>
       </View>
         <FlatList
           data={formatData(data, numColumns)}
@@ -201,9 +217,10 @@ const styles = StyleSheet.create({
   },
   centerInContainer: {
     backgroundColor: '#64DCC8',
-    paddingTop: 40,
-    alignItems: 'center',
-    height:120,
+    // paddingTop: 40,
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    height:heightMenu,
   },
   container: {
     flex: 1,
@@ -214,8 +231,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    margin: 1,
-    height: 100//Dimensions.get('window').width / numColumns, // approximate a square
+    marginTop: 7,
+    marginLeft: 7,
+    height: heightMenu,
+    borderRadius: 8,
+    shadowColor: "#000000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    shadowOffset: {
+      height: 1,
+      width: 0
+    },
+    elevation: 2
+    // boxshadow: 10 10 5 0 rgba(0,0,0,0.75),
   },
   itemInvisible: {
     backgroundColor: 'transparent',
@@ -228,8 +256,8 @@ const styles = StyleSheet.create({
   },
   itemTextRegular: {
     fontFamily: "Prompt-Regular",
-    fontSize: 14,
-    textAlign: 'left',
+    fontSize: 16,
+    textAlign: 'center',
     color: '#FFFFFF',
   },
   itemText: {

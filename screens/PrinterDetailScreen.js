@@ -133,7 +133,9 @@ export class PrinterDetailScreen extends Component
     }
     else if (buttonIndex === 1) {
       this.props.navigation.navigate('MenuByTopicScreen',
-       {'branchID': this.props.navigation.state.params.branchID,
+       {
+         'dataUrl': this.props.navigation.state.params.dataUrl,
+         'branchID': this.props.navigation.state.params.branchID,
        'username': this.props.navigation.state.params.username,
        'category': 2,
        'menuTopic': 1,
@@ -144,7 +146,9 @@ export class PrinterDetailScreen extends Component
     }
     else if (buttonIndex === 2) {
       this.props.navigation.navigate('MenuByTopicScreen',
-       {'branchID': this.props.navigation.state.params.branchID,
+       {
+         'dataUrl': this.props.navigation.state.params.dataUrl,
+         'branchID': this.props.navigation.state.params.branchID,
        'username': this.props.navigation.state.params.username,
        'category': 2,
        'menuTopic': 2,
@@ -185,7 +189,7 @@ export class PrinterDetailScreen extends Component
         <ActionSheet
           ref={o => this.ActionSheet = o}
           title={''}
-          options={[<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูอื่นๆ</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>]}
+          options={[<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูย่อย</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>]}
           cancelButtonIndex={3}
           destructiveButtonIndex={3}
           onPress={(index) => {  this.selectPrinterMenu(index) }}

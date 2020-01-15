@@ -22,7 +22,7 @@ const segments = [
 
 export class LuckyDrawDetailScreen extends Component
 {
-  menuOptions = [<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูอื่นๆ</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
+  menuOptions = [<Text style={styles.actionSheet}>เมนูหลัก</Text>, <Text style={styles.actionSheet}>เมนูย่อย</Text>, <Text style={styles.actionSheet}>เมนูไม่ได้ใช้</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
   imageOptions = [<Text style={styles.actionSheet}>Choose from Library...</Text>, <Text style={styles.actionSheet}>Take Photo...</Text>,<Text style={[styles.actionSheet,{color:'#CCCCCC'}]}>ยกเลิก</Text>];
 
   showActionSheet = () => {
@@ -1228,6 +1228,17 @@ export class LuckyDrawDetailScreen extends Component
     this.setState({numberOfVoucherCode:numberOfVoucherCode});
   }
 
+  getItems = () => {
+    var items = [];
+    this.state.discountTypeOptions.map((discountTypeOption)=>
+    {
+      items.push(<Picker.Item label={discountTypeOption.label} value={discountTypeOption.value} />);
+    })
+
+    return items;
+  }
+
+
   render()
   {
     console.log('render withInPeriodDay:'+this.state.withInPeriodDay);
@@ -1248,6 +1259,17 @@ export class LuckyDrawDetailScreen extends Component
 
         <Text style={styles.label}></Text>
         <Text style={styles.label}>รางวัลที่</Text>
+        {Platform.OS === 'android'?(<View style={styles.textInput}><Picker
+          selectedValue={this.state.rewardRank.toString()}
+          style={{
+          width: Dimensions.get('window').width-2*20,
+          height: 20}}
+          onValueChange={(value)=>{this.setState({rewardRank:parseInt(value)})}}
+          >
+          <Picker.Item label="1" value="1" />
+          <Picker.Item label="2" value="2" />
+          <Picker.Item label="3" value="3" />
+        </Picker></View>):(
         <SelectInput
           style={[styles.selectInput,{borderWidth:1}]}
           labelStyle={{fontFamily: 'Prompt-Regular',lineHeight:28}}
@@ -1255,9 +1277,9 @@ export class LuckyDrawDetailScreen extends Component
           buttonsViewStyle={{backgroundColor:"#ECECEC",borderColor:"#C7C7C7"}}
           pickerItemStyle={{fontFamily:"Prompt-Regular"}}
           pickerViewStyle={{backgroundColor:"#C7C7C7",height:150}}
-          onValueChange={(value)=>{this.rewardRankChanged(value)}}
+          onValueChange={(value)=>{this.setState({rewardRank:value})}}
           value={this.state.rewardRank}
-          options={[{value:1,label:"1"},{value:2,label:"2"},{value:3,label:"3"}]}  />
+          options={[{value:1,label:"1"},{value:2,label:"2"},{value:3,label:"3"}]}  />)}
 
 
         <Text style={styles.label}></Text>
@@ -1390,6 +1412,15 @@ export class LuckyDrawDetailScreen extends Component
 
         <Text style={styles.label}></Text>
         <Text style={styles.label}>ประเภทส่วนลด</Text>
+        {Platform.OS === 'android'?(<View style={styles.textInput}><Picker
+          selectedValue={this.state.discountType}
+          style={{
+          width: Dimensions.get('window').width-2*20,
+          height: 20}}
+          onValueChange={(value)=>{this.discountTypeChanged(value)}}
+          >
+          {this.getItems()}
+        </Picker></View>):(
         <SelectInput
           style={styles.selectInput}
           labelStyle={{fontFamily: 'Prompt-Regular',lineHeight:28}}
@@ -1399,7 +1430,7 @@ export class LuckyDrawDetailScreen extends Component
           pickerViewStyle={{backgroundColor:"#C7C7C7",height:150}}
           onValueChange={(value)=>{this.discountTypeChanged(value)}}
           value={this.state.discountType}
-          options={this.state.discountTypeOptions}  />
+          options={this.state.discountTypeOptions}  />)}
 
         {
           this.state.stepActive?(<View>
