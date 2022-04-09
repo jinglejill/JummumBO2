@@ -16,7 +16,7 @@
     "dateformat": "^3.0.3",
     "jetifier": "^1.6.5",
     "link": "^0.1.5",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "react": "16.9.0",
     "react-native": "^0.61.5",
     "react-native-action-sheet": "^2.2.0",
